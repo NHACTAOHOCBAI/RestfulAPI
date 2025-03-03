@@ -1,5 +1,8 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.User;
@@ -20,4 +23,23 @@ public class UserService {
     public void handleDeleteUser(long id) {
         this.userRepositoty.deleteById(id);
     }
+
+    public User handleGetUserById(long id) {
+        Optional<User> userOptional = this.userRepositoty.findById(id);
+        if (userOptional.isEmpty())
+            return null;
+        return userOptional.get();
+        // ham get , lay gia tri ben trong optional
+    }
+
+    public List<User> handleGetAllUser() {
+        return this.userRepositoty.findAll();
+    }
+
+    public User handleUpdateUser(User user) {
+        if (handleGetUserById(user.getId()) == null)
+            return null;
+        return this.userRepositoty.save(user);
+    }
+
 }
