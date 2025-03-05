@@ -1,8 +1,9 @@
 package vn.hoidanit.jobhunter.controller;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.service.error.IdInvalidException;
 
 @RestController
 public class UserController {
@@ -22,43 +24,48 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
-    public User createNewUser(
+    @PostMapping("/users")
+    public ResponseEntity<User> createNewUser(
             @RequestBody User user
     // request body giúp lấy được data ở phần body mà client gửi
     ) {
 
         User resUser = this.userService.handleCreateUser(user);
-        return resUser;
+        return ResponseEntity.status(HttpStatus.CREATED).body(resUser);
     }
 
-    @DeleteMapping("/user/{id}")
-    public String deleteUSer(@PathVariable("id") long id)
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUSer(@PathVariable("id") long id) throws IdInvalidException
     // PathVariable giúp lấy ra được biến ở url
     {
+        if (id >= 1500) {
+            throw new IdInvalidException("id khong lon hon 1500");
+        }
         this.userService.handleDeleteUser(id);
-        return "delete user";
+        return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/user/{id}")
-    public User getUSerById(@PathVariable("id") long id)
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUSerById(@PathVariable("id") long id)
     // PathVariable giúp lấy ra được biến ở url
     {
-        return this.userService.handleGetUserById(id);
+        User resUser = this.userService.handleGetUserById(id);
+        return ResponseEntity.ok(resUser);
     }
 
-    @GetMapping("/user")
-    public List<User> getAllUSer() {
-        return this.userService.handleGetAllUser();
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAllUSer() {
+        List<User> resUsers = this.userService.handleGetAllUser();
+        return ResponseEntity.ok(resUsers);
     }
 
-    @PutMapping("/user")
-    public User updateUser(
+    @PutMapping("/users")
+    public ResponseEntity<User> updateUser(
             @RequestBody User user
     // request body giúp lấy được data ở phần body mà client gửi
     ) {
-
         User resUser = this.userService.handleUpdateUser(user);
-        return resUser;
+        return ResponseEntity.ok(resUser);
     }
+
 }
