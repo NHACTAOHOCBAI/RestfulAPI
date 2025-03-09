@@ -56,6 +56,6 @@ public class SecurityConfiguration {
     public JwtEncoder jwtEncoder() {
         return new NimbusJwtEncoder(new ImmutableSecret<>(getSecretKey()));
     }
-    // khai bao ma hoa jwt bang gi
+    // ghi de jwtEncoder=> ma hoa jwt bang SecretKey
 
 }
