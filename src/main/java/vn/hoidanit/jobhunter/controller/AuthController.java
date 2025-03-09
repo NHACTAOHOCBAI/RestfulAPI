@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
+import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @RestController
 public class AuthController {
     final private AuthenticationManagerBuilder authenticationManagerBuilder;
+    final private SecurityUtil securityUtil;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.securityUtil = securityUtil;
     }
 
     @PostMapping("login")
@@ -30,6 +33,7 @@ public class AuthController {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         // phai ghi de loadUserByUsername o class userDetailsService de chi dinh lay
         // user o dau
+        this.securityUtil.createToken(authentication);
         return ResponseEntity.ok().body(loginDto);
     }
 }
