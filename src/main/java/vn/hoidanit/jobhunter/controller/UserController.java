@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +20,10 @@ import vn.hoidanit.jobhunter.service.error.IdInvalidException;
 @RestController
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
     }
 
@@ -29,7 +32,9 @@ public class UserController {
             @RequestBody User user
     // request body giúp lấy được data ở phần body mà client gửi
     ) {
-
+        String hashPassword = passwordEncoder.encode(user.getPassword());
+        // ma hoa mat khau
+        user.setPassword(hashPassword);
         User resUser = this.userService.handleCreateUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(resUser);
     }

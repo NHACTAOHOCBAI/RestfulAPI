@@ -37,7 +37,8 @@ public class FormatRestResponse implements ResponseBodyAdvice {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = servletResponse.getStatus();
         // lay trang thai cua phan hoi
-
+        if (body instanceof String)
+            return body;
         if (status >= 400) {
             return body;
             // neu sai tra ve body
